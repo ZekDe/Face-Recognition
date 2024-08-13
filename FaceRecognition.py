@@ -21,9 +21,11 @@ class FaceRecognition:
         self.detector = dlib.get_frontal_face_detector()
         self.shape_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
         self.face_rec_model = dlib.face_recognition_model_v1("dlib_face_recognition_resnet_model_v1.dat")
-        
+       # self. face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
         # Video akışını başlatın (0, laptop kamerasını kullanır)
         self.cap = cv2.VideoCapture(0)
+
+        # Çözünürlüğü ayarlayın
         self.lock = threading.Lock()
         self.faces = []
         self.labels = []
@@ -32,7 +34,7 @@ class FaceRecognition:
         self.personExist = []
         
         self.update_interval = 2  #second
-        self.person_inactivity_duration = 10
+        self.person_inactivity_duration = 5
         self.total_person_count = 0
         
         
@@ -47,18 +49,21 @@ class FaceRecognition:
     
 
     def faceRecognition(self):
-        self.lock.acquire()
         while self.cap.isOpened():
+            self.lock.acquire()
             ret, frame = self.cap.read()
             if not ret:
+                print("Kamera frame'i okunamadı")
                 break
             
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             new_faces = self.detector(gray)
-            
+            #new_faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
+            #if not new_faces:
+             #   self.lock.release()
+              #  continue
             current_time = time.time()
             self.checkPersonExistence(current_time)
-
             for i, new_face in enumerate(new_faces):
                 x, y, w, h = new_face.left(), new_face.top(), new_face.width(), new_face.height()
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
@@ -90,16 +95,16 @@ class FaceRecognition:
                     self.total_person_count+=1
                     cv2.putText(frame, new_label, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
 
-
+            
+            
             cv2.imshow('Face Recognition', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
-           # time.sleep(self.update_interval)        
-
+            self.lock.release()
+               # time.sleep(self.update_interval)    
         self.cap.release()
         cv2.destroyAllWindows()
-        self.lock.release()
+            
         
     def checkPersonExistence(self, current_time):
         for i, timestamp in enumerate(self.face_timestamps):

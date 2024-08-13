@@ -14,7 +14,7 @@ Created on Tue Aug  6 12:18:35 2024
 import time
 import threading
 from FaceRecognition import FaceRecognition 
-import keyboard
+#import keyboard
 
 
 
@@ -26,10 +26,10 @@ def getFaces(obj):
                 print(f'{obj.labels[i]}: face={obj.faces[i]}')
             print(f'Toplam Kişi Sayısı: {obj.total_person_count}')
         
-        time.sleep(0.5)
+        time.sleep(1)
 
-        if keyboard.is_pressed('q'):
-            break
+#        if keyboard.is_pressed('q'):
+#            break
         
 
 def main():
