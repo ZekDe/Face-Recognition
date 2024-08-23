@@ -25,7 +25,7 @@ def getFaces(obj):
             for i in range(len(obj.labels)):
                 print(f'{obj.labels[i]}: face={obj.faces[i]}')
             print(f'Toplam Kişi Sayısı: {obj.total_person_count}')
-        
+            
         time.sleep(1)
 
 #        if keyboard.is_pressed('q'):
@@ -36,8 +36,8 @@ def main():
     face_recognition = FaceRecognition()
     face_recognition.run()
     
-    thread = threading.Thread(target=getFaces, args=(face_recognition,))
-    thread.start()
+   # thread = threading.Thread(target=getFaces, args=(face_recognition,))
+   # thread.start()
     
     
 
